@@ -1,0 +1,10 @@
+schemaVersion: v1
+
+questions:
+  project_name:
+    type: str
+    help: Please enter the name of your project
+    
+  project_author:
+    type: str
+    help: "Please enter the author's name for {{project_name}}"

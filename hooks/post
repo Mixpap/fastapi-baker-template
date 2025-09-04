@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+
+# Baker post-generation hook
+# This script runs in the generated project directory after template generation
+# It receives context via stdin with answers, template_dir, and output_dir
+
+import json
+import sys
+import subprocess
+import os
+from pathlib import Path
+
+def run_command(cmd, description):
+    """Run a command and handle errors gracefully."""
+    print(f"📦 {description}...")
+    try:
+        result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+        print(f"✅ {description} completed")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️  Warning: {description} failed: {e.stderr.strip()}")
+        return False
+
+def main():
+    # Read context from stdin
+    try:
+        context = json.load(sys.stdin)
+        answers = context["answers"]
+        template_dir = context["template_dir"]
+        output_dir = context["output_dir"]
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"❌ Error reading context: {e}")
+        sys.exit(1)
+
+    project_name = answers.get("project_name", "Unknown Project")
+    project_author = answers.get("project_author", "Unknown Author")
+    
+    print(f"🚀 Setting up {project_name} by {project_author}...")
+    print(f"📍 Working in: {output_dir}")
+
+    # Change to output directory
+    os.chdir(output_dir)
+
+    # Check if pyproject.toml exists
+    if not Path("pyproject.toml").exists():
+        print("❌ Error: pyproject.toml not found. Template generation may have failed.")
+        sys.exit(1)
+
+    # Initialize Git repository
+    run_command("git init", "Initializing Git repository")
+
+    # Set up Python virtual environment
+    if run_command("uv venv", "Setting up Python virtual environment"):
+        # Install dependencies
+        run_command("uv sync", "Installing dependencies")
+        
+        # Copy environment file
+        if Path(".env.example").exists():
+            run_command("cp .env.example .env", "Setting up environment file")
+        
+        # Run initial code formatting
+        run_command("uv run ruff format .", "Formatting code")
+
+    print("")
+    print("✅ Project setup complete!")
+    print("")
+    print("Next steps:")
+    print("  1. Activate your virtual environment:")
+    print("     source .venv/bin/activate")
+    print("")
+    print("  2. Start the development server:")
+    print("     uvicorn backend.main:app --reload")
+    print("")
+    print("  3. Open your browser:")
+    print("     • API: http://localhost:8000")
+    print("     • Documentation: http://localhost:8000/docs")
+    print("")
+    print("  4. Run tests:")
+    print("     pytest")
+    print("")
+    print("Happy coding! 🎉")
+
+if __name__ == "__main__":
+    main()

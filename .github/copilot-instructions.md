@@ -1,0 +1,21 @@
+# General Copilot Usage Guidelines
+- Use best practices for code quality and maintainability
+- Write clear, concise comments to # General Copilot Usage Guidelines
+- Use best practices for code quality and maintainability
+- Write clear, concise comments to explain complex logic
+- Use meaningful variable and function names
+- Keep code DRY (Don't Repeat Yourself) by abstracting common logic into functions or components. Do not over-engineer solutions.
+- Use version control (Git) effectively, with clear commit messages
+- Test code thoroughly before committing changes using pytest instead of unittest
+- Use logging for tracking application behavior and debugging
+- Do not use complex or unnecessary code structures (classes) unless they add strong value due to quality, maintainability, complexity or reusability
+- Discuss any possible issues regarding scalability, security, safety etc
+- Strongly avoid creating unnecessary files, directories and dependencies and making significant changes in the codebase.
+- Avoid redundancy.
+- Go step by step by describing your strategy and ask for confirmation. Use the human in the loop.
+- Avoid adding new dependencies when not needed
+- When something does not work do not try to bypass it, first needs to be resolved
+- Always work with the `uv` tool and avoid global python environments. Do not use `requirements.txt` just `pyproject.toml`
+- Do not stop if there are still already discovered issues
+- For type and linting checks, use `ruff` and `ty`, no other tools.
+- Do not violate the "You Ain't Gonna Need It" (YAGNI) principle
