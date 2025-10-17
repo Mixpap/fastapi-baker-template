@@ -1,0 +1,23 @@
+{
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    "python.usePythonEnvironmentsExtension": true,
+    "python.terminal.activateEnvironment": true,
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+        "backend/tests",
+        "-v"
+    ],
+    "python.testing.cwd": "${workspaceFolder}",
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "python.analysis.extraPaths": [
+        "./backend"
+    ],
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        ".venv": true,
+        ".pytest_cache": true,
+        "*.egg-info": true
+    }
+}
