@@ -1,6 +1,6 @@
 # FastAPI Baker Template
 
-A [Baker](https://github.com/AdityaHonkalas/baker) template for generating modern FastAPI projects with optional database support and best practices.
+A [Baker](https://github.com/aliev/baker) template for generating modern FastAPI projects with optional database support and best practices.
 
 ## Features
 
@@ -18,8 +18,7 @@ A [Baker](https://github.com/AdityaHonkalas/baker) template for generating moder
 
 ### Prerequisites
 ```bash
-# Install Baker (project generator)
-pip install baker
+# Install Baker (project generator, see https://github.com/aliev/baker on how to install)
 
 # Install UV (Python package manager)  
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -36,7 +35,7 @@ You'll be prompted to choose:
 - ✅ **Example CRUD endpoints** (User/Post models)
 - ✅ **Logfire integration** (Enhanced logging)
 
-### What Happens Automatically
+### What Happens Automatically (if the hooks are executed)
 1. **Template Generation** - Files created based on your choices
 2. **Git Repository** - Initialized with proper .gitignore
 3. **Virtual Environment** - UV creates and configures venv
@@ -129,14 +128,5 @@ To modify this template:
 3. Test generation: `baker . test-project`
 4. Submit PR with your improvements
 
-## Why This Template?
-
-- ✅ **Production Ready** - Follows FastAPI and Python best practices
-- ✅ **Type Safe** - Full type hints with mypy compatibility  
-- ✅ **Fast Setup** - From zero to running API in under 2 minutes
-- ✅ **Flexible** - Choose only the features you need
-- ✅ **Modern** - Uses latest Python tooling and patterns
-- ✅ **Tested** - Includes test structure and examples
-
-## LLM Assistance usage
+## ⚠️ LLM Assistance usage
 Some of the code in this template was generated with the help of large language models (LLMs) and have not been fully tested and reviewed. Please review and test thoroughly before using in production.
