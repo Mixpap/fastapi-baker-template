@@ -1,0 +1,90 @@
+# {{project_name}}
+
+A FastAPI project with modern tooling.
+
+## Features
+
+- 🚀 **FastAPI** - Modern web framework
+- 📦 **UV** - Fast Python package manager
+{%- if use_database %}
+- 🗄️ **SQLModel** - Type-safe database ORM with {{database_type|title}}
+- 🔄 **Alembic** - Database migrations
+{%- endif %}
+- 🧹 **Ruff** - Linting and formatting
+- 🧪 **Pytest** - Testing framework
+{%- if use_logfire %}
+- 🔥 **Logfire** - Enhanced logging
+{%- endif %}
+
+## Quick Start
+
+```bash
+# Install dependencies
+uv sync
+
+# Set up environment
+cp .env.example .env
+# Edit .env with your settings
+
+{%- if use_database %}
+# Set up database
+uv run alembic revision --autogenerate -m "Initial migration"
+uv run alembic upgrade head
+
+{%- endif %}
+# Start server
+uv run fastapi dev backend/main.py
+```
+
+Visit http://localhost:8000/docs for API documentation.
+
+{%- if use_database %}
+
+## Database
+
+{%- if database_type == "sqlite" %}
+Uses SQLite database (stored as `./app.db`). No additional setup required.
+{%- elif database_type == "postgresql" %}
+Uses PostgreSQL. Update `DATABASE_URL` in your `.env` file:
+```bash
+DATABASE_URL=postgresql://user:password@localhost/{{project_name.lower().replace('-', '_')}}
+```
+{%- endif %}
+
+### Initial Setup
+After running `uv sync` and setting up your `.env` file:
+
+```bash
+# Create initial migration
+uv run alembic revision --autogenerate -m "Initial migration"
+
+# Apply migration to database
+uv run alembic upgrade head
+```
+
+### Making Schema Changes
+1. **Edit models** in `backend/db/schema.py`
+2. **Generate migration**: `uv run alembic revision --autogenerate -m "describe your changes"`
+3. **Apply migration**: `uv run alembic upgrade head`
+4. **Restart your server** to pick up changes
+
+{%- if include_db_examples %}
+### Example API Endpoints
+- `GET /health` - Health check
+- `POST /users/` - Create user  
+- `GET /users/` - List users
+- `GET /users/{id}` - Get user by ID
+{%- endif %}
+
+{%- endif %}
+
+## Development
+
+```bash
+# Run tests
+uv run pytest
+
+# Format code
+uv run ruff format
+uv run ruff check --fix
+```

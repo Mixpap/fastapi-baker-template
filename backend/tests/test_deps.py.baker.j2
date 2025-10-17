@@ -1,0 +1,54 @@
+"""
+Test examples for dependency injection and settings.
+These tests show how to test your dependencies and configuration.
+"""
+import pytest
+from ..deps import get_settings, Settings
+{%- if use_database %}
+from ..deps import get_db_engine, get_db_session
+from sqlmodel import Session
+{%- endif %}
+
+
+def test_get_settings():
+    """Test that settings can be retrieved."""
+    settings = get_settings()
+    assert isinstance(settings, Settings)
+
+
+def test_settings_caching():
+    """Test that settings are cached properly."""
+    settings1 = get_settings()
+    settings2 = get_settings()
+    # Should be the same instance due to @lru_cache
+    assert settings1 is settings2
+
+
+def test_settings_types():
+    """Test that settings have the expected types."""
+    settings = get_settings()
+    assert isinstance(settings.logfire_token, str)
+    {%- if use_database %}
+    assert isinstance(settings.database_url, str)
+    {%- endif %}
+
+{%- if use_database %}
+
+
+def test_get_db_engine():
+    """Test that database engine can be created."""
+    engine = get_db_engine()
+    assert engine is not None
+
+
+def test_db_session_dependency():
+    """Test that database session dependency works."""
+    session_generator = get_db_session()
+    session = next(session_generator)
+    assert isinstance(session, Session)
+    # Clean up
+    try:
+        next(session_generator)
+    except StopIteration:
+        pass  # Expected behavior
+{%- endif %}

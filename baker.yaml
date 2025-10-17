@@ -8,3 +8,34 @@ questions:
   project_author:
     type: str
     help: "Please enter the author's name for {{project_name}}"
+
+  use_database:
+    type: bool
+    help: "Would you like to include database functionality with SQLModel?"
+    default: true
+
+  database_type:
+    type: str
+    help: "Which database would you like to use?"
+    choices:
+      - sqlite
+      - postgresql
+    default: sqlite
+    when: use_database
+
+  include_db_examples:
+    type: bool
+    help: "Would you like to include example CRUD operations for the database?"
+    default: true
+    when: use_database
+
+  use_logfire:
+    type: bool
+    help: "Would you like to include logfire for enhanced logging capabilities? (Logfire needs an authentication token, if you do you are not sure procceed with false)"
+    default: false
+
+  logfire_token:
+    type: str
+    help: "Logfire needs an authentication token. Please enter your Logfire token:"
+    default: ""
+    when: use_logfire

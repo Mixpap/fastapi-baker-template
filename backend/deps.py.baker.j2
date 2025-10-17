@@ -11,7 +11,9 @@ from fastapi import Depends
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from loguru import logger
+{%- if use_database %}
 from sqlmodel import Session, create_engine, SQLModel
+{%- endif %}
 
 class Settings(BaseSettings):
     """Application settings with environment variable support."""
@@ -24,13 +26,21 @@ class Settings(BaseSettings):
     
     # Basic app settings
     logfire_token: str = Field(default="", validation_alias="LOGFIRE_TOKEN")
+    {%- if use_database %}
     
     # Database settings
     database_url: str = Field(
+        {%- if database_type == "postgresql" %}
+        default="postgresql://user:password@localhost/{{project_name.lower().replace('-', '_')}}",
+        {%- elif database_type == "mysql" %}
+        default="mysql://user:password@localhost/{{project_name.lower().replace('-', '_')}}",
+        {%- else %}
         default="sqlite:///./app.db",
+        {%- endif %}
         validation_alias="DATABASE_URL",
         description="Database connection URL"
     )
+    {%- endif %}
 
     def model_post_init(self, context: Any) -> None:
         return None
@@ -46,6 +56,8 @@ def get_settings() -> Settings:
 # Dependency to get settings in route handlers
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
+{%- if use_database %}
+
 # Database Engine - Created once and reused
 _engine = None
 
@@ -57,17 +69,18 @@ def get_db_engine():
     global _engine
     if _engine is None:
         settings = get_settings()
+        connect_args = {}
+        {%- if database_type == "sqlite" %}
+        connect_args = {"check_same_thread": False}
+        {%- endif %}
+        
         _engine = create_engine(
             settings.database_url,
             echo=False,  # Set to True for SQL logging
-            connect_args={"check_same_thread": False} if "sqlite" in settings.database_url else {}
+            connect_args=connect_args
         )
-        # Create tables
-        SQLModel.metadata.create_all(_engine)
+        # Note: Tables are managed by Alembic migrations
     return _engine
-
-## Database session dependency
-from sqlmodel import Session, create_engine
 
 def get_db_session() -> Generator[Session, None, None]:
     """
@@ -92,3 +105,4 @@ def get_db_session() -> Generator[Session, None, None]:
 
 # Annotated dependency for db sessions
 SessionDep = Annotated[Session, Depends(get_db_session)]
+{%- endif %}

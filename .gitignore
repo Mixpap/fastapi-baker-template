@@ -81,3 +81,4 @@ htmlcov/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+pyproject.toml

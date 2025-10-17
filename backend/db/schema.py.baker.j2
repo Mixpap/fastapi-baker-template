@@ -1,0 +1,27 @@
+{%- if use_database %}
+from sqlmodel import SQLModel, Field as Col, Relationship
+
+{%- if include_db_examples %}
+class User(SQLModel, table=True):
+    id: int | None = Col(default=None, primary_key=True)
+    name: str
+    email: str
+
+    posts: list["Post"] = Relationship(back_populates="author")
+
+class Post(SQLModel, table=True):
+    id: int | None = Col(default=None, primary_key=True)
+    title: str
+    content: str
+    author_id: int | None = Col(foreign_key="user.id")
+
+    author: User | None = Relationship(back_populates="posts")
+{%- else %}
+# Add your SQLModel models here
+# Example:
+# 
+# class YourModel(SQLModel, table=True):
+#     id: int | None = Col(default=None, primary_key=True)
+#     name: str
+{%- endif %}
+{%- endif %}

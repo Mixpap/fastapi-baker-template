@@ -1,12 +1,15 @@
 # backend/routes/api.py
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
+{%- if use_database and include_db_examples %}, HTTPException, status{%- endif %}
 from pydantic import BaseModel
+{%- if use_database and include_db_examples %}
 from sqlmodel import select
 
 from ..db.schema import User
 from ..deps import SessionDep
+{%- endif %}
 
 # Create the router
 router = APIRouter()
@@ -35,6 +38,8 @@ async def get_example_data():
         data={"sample": "data", "timestamp": "2025-01-01T00:00:00Z"},
         count=1
     )
+
+{%- if use_database and include_db_examples %}
 
 # Example CRUD operations using the database dependency
 
@@ -92,3 +97,4 @@ async def get_user(user_id: int, db: SessionDep):
         )
 
     return user
+{%- endif %}

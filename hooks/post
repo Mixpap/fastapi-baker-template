@@ -12,10 +12,8 @@ from pathlib import Path
 
 def run_command(cmd, description):
     """Run a command and handle errors gracefully."""
-    print(f"📦 {description}...")
     try:
         result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
-        print(f"✅ {description} completed")
         return True
     except subprocess.CalledProcessError as e:
         print(f"⚠️  Warning: {description} failed: {e.stderr.strip()}")
@@ -60,24 +58,45 @@ def main():
         
         # Run initial code formatting
         run_command("uv run ruff format .", "Formatting code")
+        
+        # Initialize Alembic if database is enabled
+        use_database = answers.get("use_database", False)
+        
+        if use_database:
+            # Just create the directory structure - user will generate migrations
+            Path("backend/db/migrations/versions").mkdir(parents=True, exist_ok=True)
 
     print("")
     print("✅ Project setup complete!")
     print("")
     print("Next steps:")
-    print("  1. Activate your virtual environment:")
-    print("     source .venv/bin/activate")
+    
+    use_database = answers.get("use_database", False)
+    database_type = answers.get("database_type", "sqlite")
+    
+    if use_database:
+        print("  1. Create and apply database migrations:")
+        print("     uv run alembic revision --autogenerate -m 'Initial migration'")
+        print("     uv run alembic upgrade head")
+        print("  2. Start the server: uv run fastapi dev backend/main.py")
+    else:
+        print("  1. Start the server: uv run fastapi dev backend/main.py")
     print("")
-    print("  2. Start the development server:")
-    print("     uvicorn backend.main:app --reload")
-    print("")
-    print("  3. Open your browser:")
+    
+    print("  2. Open your browser:")
     print("     • API: http://localhost:8000")
     print("     • Documentation: http://localhost:8000/docs")
     print("")
-    print("  4. Run tests:")
-    print("     pytest")
+    print("  3. Run tests:")
+    print("     uv run pytest")
     print("")
+    
+    if use_database:
+        print("📖 Database commands:")
+        print("  • Create migration: uv run alembic revision --autogenerate -m 'description'")
+        print("  • Apply migrations: uv run alembic upgrade head")
+        print("")
+    
     print("Happy coding! 🎉")
 
 if __name__ == "__main__":

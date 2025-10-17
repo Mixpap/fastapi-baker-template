@@ -6,13 +6,24 @@ readme = "README.md"
 authors = [
     {name = "{{project_author}}"}
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.104.0",
     "uvicorn[standard]>=0.24.0",
     "pydantic>=2.5.0",
     "pydantic-settings>=2.1.0",
-    "loguru>=0.7.3"
+    {%- if use_database %}
+    "sqlmodel>=0.0.14",
+    "alembic>=1.13.0",
+    {%- if database_type == "postgresql" %}
+    "psycopg2-binary>=2.9.0",
+    {%- elif database_type == "mysql" %}
+    "pymysql>=1.0.0",
+    {%- endif %}
+    {%- endif %}
+    "loguru>=0.7.3"{%- if use_logfire %},
+    "logfire>=4.13.2"
+    {%- endif %}
 ]
 
 [project.optional-dependencies]
